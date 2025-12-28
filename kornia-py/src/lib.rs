@@ -156,11 +156,6 @@ pub fn kornia_rs(m: &Bound<'_, PyModule>) -> PyResult<()> {
 
     m.add_submodule(&io_mod)?;
 
-    // Resize submodule
-    let resize_mod = PyModule::new(m.py(), "resize")?;
-    resize_mod.add_function(wrap_pyfunction!(resize::resize, &resize_mod)?)?;
-    m.add_submodule(&resize_mod)?;
-
     // Warp submodule
     let warp_mod = PyModule::new(m.py(), "warp")?;
     warp_mod.add_function(wrap_pyfunction!(warp::warp_affine, &warp_mod)?)?;
