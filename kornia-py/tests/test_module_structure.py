@@ -1,27 +1,25 @@
-"""Test the new module structure organization."""
+"""Test the new simplified module structure organization."""
 import kornia_rs as K
 
 
-def test_color_module_exists():
-    """Test that color submodule exists and has expected functions."""
-    assert hasattr(K, 'color')
-    assert hasattr(K.color, 'rgb_from_gray')
-    assert hasattr(K.color, 'rgb_from_rgba')
-    assert hasattr(K.color, 'rgb_from_bgra')
-    assert hasattr(K.color, 'bgr_from_rgb')
-    assert hasattr(K.color, 'gray_from_rgb')
-
-
-def test_enhance_module_exists():
-    """Test that enhance submodule exists and has expected functions."""
-    assert hasattr(K, 'enhance')
-    assert hasattr(K.enhance, 'add_weighted')
-
-
-def test_histogram_module_exists():
-    """Test that histogram submodule exists and has expected functions."""
-    assert hasattr(K, 'histogram')
-    assert hasattr(K.histogram, 'compute_histogram')
+def test_imgproc_module_exists():
+    """Test that imgproc submodule exists and has all image processing functions."""
+    assert hasattr(K, 'imgproc')
+    # Color functions
+    assert hasattr(K.imgproc, 'rgb_from_gray')
+    assert hasattr(K.imgproc, 'rgb_from_rgba')
+    assert hasattr(K.imgproc, 'rgb_from_bgra')
+    assert hasattr(K.imgproc, 'bgr_from_rgb')
+    assert hasattr(K.imgproc, 'gray_from_rgb')
+    # Enhance functions
+    assert hasattr(K.imgproc, 'add_weighted')
+    # Histogram functions
+    assert hasattr(K.imgproc, 'compute_histogram')
+    # Resize functions
+    assert hasattr(K.imgproc, 'resize')
+    # Warp functions
+    assert hasattr(K.imgproc, 'warp_affine')
+    assert hasattr(K.imgproc, 'warp_perspective')
 
 
 def test_icp_module_exists():
@@ -33,42 +31,23 @@ def test_icp_module_exists():
 
 
 def test_io_module_exists():
-    """Test that io submodule exists with nested submodules."""
+    """Test that io submodule exists with all IO functions (no nested submodules)."""
     assert hasattr(K, 'io')
+    # Top-level IO functions
     assert hasattr(K.io, 'read_image')
     assert hasattr(K.io, 'read_image_any')
     assert hasattr(K.io, 'ImageDecoder')
     assert hasattr(K.io, 'ImageEncoder')
     
-    # Test nested submodules
-    assert hasattr(K.io, 'png')
-    assert hasattr(K.io.png, 'read_image_png_u8')
-    assert hasattr(K.io.png, 'write_image_png_u8')
-    
-    assert hasattr(K.io, 'jpeg')
-    assert hasattr(K.io.jpeg, 'read_image_jpeg')
-    assert hasattr(K.io.jpeg, 'write_image_jpeg')
-    
-    assert hasattr(K.io, 'tiff')
-    assert hasattr(K.io.tiff, 'read_image_tiff_u8')
-    assert hasattr(K.io.tiff, 'write_image_tiff_f32')
-    
-    assert hasattr(K.io, 'jpegturbo')
-    assert hasattr(K.io.jpegturbo, 'read_image_jpegturbo')
-    assert hasattr(K.io.jpegturbo, 'write_image_jpegturbo')
-
-
-def test_resize_function_exists():
-    """Test that resize function exists at top level (not as a submodule since it's a single function)."""
-    assert hasattr(K, 'resize')
-    assert callable(K.resize)
-
-
-def test_warp_module_exists():
-    """Test that warp submodule exists and has expected functions."""
-    assert hasattr(K, 'warp')
-    assert hasattr(K.warp, 'warp_affine')
-    assert hasattr(K.warp, 'warp_perspective')
+    # All format-specific functions directly in io module
+    assert hasattr(K.io, 'read_image_png_u8')
+    assert hasattr(K.io, 'write_image_png_u8')
+    assert hasattr(K.io, 'read_image_jpeg')
+    assert hasattr(K.io, 'write_image_jpeg')
+    assert hasattr(K.io, 'read_image_tiff_u8')
+    assert hasattr(K.io, 'write_image_tiff_f32')
+    assert hasattr(K.io, 'read_image_jpegturbo')
+    assert hasattr(K.io, 'write_image_jpegturbo')
 
 
 def test_backward_compatibility():

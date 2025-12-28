@@ -90,25 +90,6 @@ pub fn kornia_rs(m: &Bound<'_, PyModule>) -> PyResult<()> {
     apriltag_mod.add_submodule(&apriltag_family_mod)?;
     m.add_submodule(&apriltag_mod)?;
 
-    // Color submodule
-    let color_mod = PyModule::new(m.py(), "color")?;
-    color_mod.add_function(wrap_pyfunction!(color::rgb_from_gray, &color_mod)?)?;
-    color_mod.add_function(wrap_pyfunction!(color::rgb_from_rgba, &color_mod)?)?;
-    color_mod.add_function(wrap_pyfunction!(color::rgb_from_bgra, &color_mod)?)?;
-    color_mod.add_function(wrap_pyfunction!(color::bgr_from_rgb, &color_mod)?)?;
-    color_mod.add_function(wrap_pyfunction!(color::gray_from_rgb, &color_mod)?)?;
-    m.add_submodule(&color_mod)?;
-
-    // Enhance submodule
-    let enhance_mod = PyModule::new(m.py(), "enhance")?;
-    enhance_mod.add_function(wrap_pyfunction!(enhance::add_weighted, &enhance_mod)?)?;
-    m.add_submodule(&enhance_mod)?;
-
-    // Histogram submodule
-    let histogram_mod = PyModule::new(m.py(), "histogram")?;
-    histogram_mod.add_function(wrap_pyfunction!(histogram::compute_histogram, &histogram_mod)?)?;
-    m.add_submodule(&histogram_mod)?;
-
     // ICP submodule
     let icp_mod = PyModule::new(m.py(), "icp")?;
     icp_mod.add_function(wrap_pyfunction!(icp::icp_vanilla, &icp_mod)?)?;
@@ -116,51 +97,46 @@ pub fn kornia_rs(m: &Bound<'_, PyModule>) -> PyResult<()> {
     icp_mod.add_class::<PyICPResult>()?;
     m.add_submodule(&icp_mod)?;
 
-    // IO submodule with nested submodules
+    // IO submodule - all functions directly in io module
     let io_mod = PyModule::new(m.py(), "io")?;
     io_mod.add_function(wrap_pyfunction!(io::functional::read_image_any, &io_mod)?)?;
     io_mod.add_function(wrap_pyfunction!(io::functional::read_image, &io_mod)?)?;
+    io_mod.add_function(wrap_pyfunction!(io::png::decode_image_png_u8, &io_mod)?)?;
+    io_mod.add_function(wrap_pyfunction!(io::png::decode_image_png_u16, &io_mod)?)?;
+    io_mod.add_function(wrap_pyfunction!(io::png::read_image_png_u8, &io_mod)?)?;
+    io_mod.add_function(wrap_pyfunction!(io::png::read_image_png_u16, &io_mod)?)?;
+    io_mod.add_function(wrap_pyfunction!(io::png::write_image_png_u8, &io_mod)?)?;
+    io_mod.add_function(wrap_pyfunction!(io::png::write_image_png_u16, &io_mod)?)?;
+    io_mod.add_function(wrap_pyfunction!(io::jpeg::decode_image_jpeg, &io_mod)?)?;
+    io_mod.add_function(wrap_pyfunction!(io::jpeg::read_image_jpeg, &io_mod)?)?;
+    io_mod.add_function(wrap_pyfunction!(io::jpeg::write_image_jpeg, &io_mod)?)?;
+    io_mod.add_function(wrap_pyfunction!(io::jpeg::encode_image_jpeg, &io_mod)?)?;
+    io_mod.add_function(wrap_pyfunction!(io::tiff::read_image_tiff_f32, &io_mod)?)?;
+    io_mod.add_function(wrap_pyfunction!(io::tiff::read_image_tiff_u8, &io_mod)?)?;
+    io_mod.add_function(wrap_pyfunction!(io::tiff::read_image_tiff_u16, &io_mod)?)?;
+    io_mod.add_function(wrap_pyfunction!(io::tiff::write_image_tiff_f32, &io_mod)?)?;
+    io_mod.add_function(wrap_pyfunction!(io::tiff::write_image_tiff_u8, &io_mod)?)?;
+    io_mod.add_function(wrap_pyfunction!(io::tiff::write_image_tiff_u16, &io_mod)?)?;
+    io_mod.add_function(wrap_pyfunction!(io::jpegturbo::decode_image_jpegturbo, &io_mod)?)?;
+    io_mod.add_function(wrap_pyfunction!(io::jpegturbo::read_image_jpegturbo, &io_mod)?)?;
+    io_mod.add_function(wrap_pyfunction!(io::jpegturbo::write_image_jpegturbo, &io_mod)?)?;
     io_mod.add_class::<PyImageDecoder>()?;
     io_mod.add_class::<PyImageEncoder>()?;
-
-    let io_png_mod = PyModule::new(io_mod.py(), "png")?;
-    io_png_mod.add_function(wrap_pyfunction!(io::png::decode_image_png_u8, &io_png_mod)?)?;
-    io_png_mod.add_function(wrap_pyfunction!(io::png::decode_image_png_u16, &io_png_mod)?)?;
-    io_png_mod.add_function(wrap_pyfunction!(io::png::read_image_png_u8, &io_png_mod)?)?;
-    io_png_mod.add_function(wrap_pyfunction!(io::png::read_image_png_u16, &io_png_mod)?)?;
-    io_png_mod.add_function(wrap_pyfunction!(io::png::write_image_png_u8, &io_png_mod)?)?;
-    io_png_mod.add_function(wrap_pyfunction!(io::png::write_image_png_u16, &io_png_mod)?)?;
-    io_mod.add_submodule(&io_png_mod)?;
-
-    let io_jpeg_mod = PyModule::new(io_mod.py(), "jpeg")?;
-    io_jpeg_mod.add_function(wrap_pyfunction!(io::jpeg::decode_image_jpeg, &io_jpeg_mod)?)?;
-    io_jpeg_mod.add_function(wrap_pyfunction!(io::jpeg::read_image_jpeg, &io_jpeg_mod)?)?;
-    io_jpeg_mod.add_function(wrap_pyfunction!(io::jpeg::write_image_jpeg, &io_jpeg_mod)?)?;
-    io_jpeg_mod.add_function(wrap_pyfunction!(io::jpeg::encode_image_jpeg, &io_jpeg_mod)?)?;
-    io_mod.add_submodule(&io_jpeg_mod)?;
-
-    let io_tiff_mod = PyModule::new(io_mod.py(), "tiff")?;
-    io_tiff_mod.add_function(wrap_pyfunction!(io::tiff::read_image_tiff_f32, &io_tiff_mod)?)?;
-    io_tiff_mod.add_function(wrap_pyfunction!(io::tiff::read_image_tiff_u8, &io_tiff_mod)?)?;
-    io_tiff_mod.add_function(wrap_pyfunction!(io::tiff::read_image_tiff_u16, &io_tiff_mod)?)?;
-    io_tiff_mod.add_function(wrap_pyfunction!(io::tiff::write_image_tiff_f32, &io_tiff_mod)?)?;
-    io_tiff_mod.add_function(wrap_pyfunction!(io::tiff::write_image_tiff_u8, &io_tiff_mod)?)?;
-    io_tiff_mod.add_function(wrap_pyfunction!(io::tiff::write_image_tiff_u16, &io_tiff_mod)?)?;
-    io_mod.add_submodule(&io_tiff_mod)?;
-
-    let io_jpegturbo_mod = PyModule::new(io_mod.py(), "jpegturbo")?;
-    io_jpegturbo_mod.add_function(wrap_pyfunction!(io::jpegturbo::decode_image_jpegturbo, &io_jpegturbo_mod)?)?;
-    io_jpegturbo_mod.add_function(wrap_pyfunction!(io::jpegturbo::read_image_jpegturbo, &io_jpegturbo_mod)?)?;
-    io_jpegturbo_mod.add_function(wrap_pyfunction!(io::jpegturbo::write_image_jpegturbo, &io_jpegturbo_mod)?)?;
-    io_mod.add_submodule(&io_jpegturbo_mod)?;
-
     m.add_submodule(&io_mod)?;
 
-    // Warp submodule
-    let warp_mod = PyModule::new(m.py(), "warp")?;
-    warp_mod.add_function(wrap_pyfunction!(warp::warp_affine, &warp_mod)?)?;
-    warp_mod.add_function(wrap_pyfunction!(warp::warp_perspective, &warp_mod)?)?;
-    m.add_submodule(&warp_mod)?;
+    // Imgproc submodule - color, enhance, histogram, resize, warp functions
+    let imgproc_mod = PyModule::new(m.py(), "imgproc")?;
+    imgproc_mod.add_function(wrap_pyfunction!(color::rgb_from_gray, &imgproc_mod)?)?;
+    imgproc_mod.add_function(wrap_pyfunction!(color::rgb_from_rgba, &imgproc_mod)?)?;
+    imgproc_mod.add_function(wrap_pyfunction!(color::rgb_from_bgra, &imgproc_mod)?)?;
+    imgproc_mod.add_function(wrap_pyfunction!(color::bgr_from_rgb, &imgproc_mod)?)?;
+    imgproc_mod.add_function(wrap_pyfunction!(color::gray_from_rgb, &imgproc_mod)?)?;
+    imgproc_mod.add_function(wrap_pyfunction!(enhance::add_weighted, &imgproc_mod)?)?;
+    imgproc_mod.add_function(wrap_pyfunction!(histogram::compute_histogram, &imgproc_mod)?)?;
+    imgproc_mod.add_function(wrap_pyfunction!(resize::resize, &imgproc_mod)?)?;
+    imgproc_mod.add_function(wrap_pyfunction!(warp::warp_affine, &imgproc_mod)?)?;
+    imgproc_mod.add_function(wrap_pyfunction!(warp::warp_perspective, &imgproc_mod)?)?;
+    m.add_submodule(&imgproc_mod)?;
 
     Ok(())
 }
